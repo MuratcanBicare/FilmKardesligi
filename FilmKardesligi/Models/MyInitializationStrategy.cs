@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FilmKardesligi.Models
 {
-    public class MyInitializationStrategy : CreateDatabaseIfNotExists<FilmKardesligiContext>
+    public class MyInitializationStrategy : DropCreateDatabaseIfModelChanges<FilmKardesligiContext>
     {
         protected override void Seed(FilmKardesligiContext context)
         {

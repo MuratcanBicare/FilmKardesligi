@@ -33,6 +33,7 @@ namespace FilmKardesligi
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.tsmiFilmTurleri = new System.Windows.Forms.ToolStripMenuItem();
             this.btnİptal = new System.Windows.Forms.Button();
@@ -56,12 +57,20 @@ namespace FilmKardesligi
             this.rbPuan3 = new System.Windows.Forms.RadioButton();
             this.label3 = new System.Windows.Forms.Label();
             this.clbTur = new System.Windows.Forms.CheckedListBox();
+            this.cboTurleriListele = new System.Windows.Forms.ComboBox();
+            this.cboPuanFiltre = new System.Windows.Forms.ComboBox();
+            this.pboFoto = new System.Windows.Forms.PictureBox();
+            this.lblFotoDegistir = new System.Windows.Forms.Label();
+            this.lblFotoKaldir = new System.Windows.Forms.Label();
+            this.ofdFoto = new System.Windows.Forms.OpenFileDialog();
             this.menuStrip1.SuspendLayout();
             this.gboPuan.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pboFoto)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
             // 
+            this.menuStrip1.BackColor = System.Drawing.Color.Transparent;
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsmiFilmTurleri});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
@@ -127,6 +136,7 @@ namespace FilmKardesligi
             this.lstFilmler.Name = "lstFilmler";
             this.lstFilmler.Size = new System.Drawing.Size(528, 424);
             this.lstFilmler.TabIndex = 8;
+            this.lstFilmler.SelectedIndexChanged += new System.EventHandler(this.lstFilmler_SelectedIndexChanged);
             // 
             // btnEkle
             // 
@@ -143,7 +153,7 @@ namespace FilmKardesligi
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(13, 36);
+            this.label1.Location = new System.Drawing.Point(13, 42);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(69, 20);
@@ -152,7 +162,7 @@ namespace FilmKardesligi
             // 
             // txtFilm
             // 
-            this.txtFilm.Location = new System.Drawing.Point(88, 33);
+            this.txtFilm.Location = new System.Drawing.Point(87, 39);
             this.txtFilm.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.txtFilm.Name = "txtFilm";
             this.txtFilm.Size = new System.Drawing.Size(223, 26);
@@ -172,7 +182,7 @@ namespace FilmKardesligi
             // 
             this.radioButton1.AutoSize = true;
             this.radioButton1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.radioButton1.Location = new System.Drawing.Point(25, 55);
+            this.radioButton1.Location = new System.Drawing.Point(6, 25);
             this.radioButton1.Name = "radioButton1";
             this.radioButton1.Size = new System.Drawing.Size(83, 21);
             this.radioButton1.TabIndex = 17;
@@ -184,7 +194,7 @@ namespace FilmKardesligi
             // 
             this.radioButton2.AutoSize = true;
             this.radioButton2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.radioButton2.Location = new System.Drawing.Point(25, 92);
+            this.radioButton2.Location = new System.Drawing.Point(6, 62);
             this.radioButton2.Name = "radioButton2";
             this.radioButton2.Size = new System.Drawing.Size(55, 21);
             this.radioButton2.TabIndex = 18;
@@ -196,7 +206,7 @@ namespace FilmKardesligi
             // 
             this.radioButton3.AutoSize = true;
             this.radioButton3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.radioButton3.Location = new System.Drawing.Point(25, 128);
+            this.radioButton3.Location = new System.Drawing.Point(6, 98);
             this.radioButton3.Name = "radioButton3";
             this.radioButton3.Size = new System.Drawing.Size(54, 21);
             this.radioButton3.TabIndex = 19;
@@ -208,7 +218,7 @@ namespace FilmKardesligi
             // 
             this.radioButton4.AutoSize = true;
             this.radioButton4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.radioButton4.Location = new System.Drawing.Point(25, 169);
+            this.radioButton4.Location = new System.Drawing.Point(6, 139);
             this.radioButton4.Name = "radioButton4";
             this.radioButton4.Size = new System.Drawing.Size(39, 21);
             this.radioButton4.TabIndex = 20;
@@ -220,7 +230,7 @@ namespace FilmKardesligi
             // 
             this.radioButton5.AutoSize = true;
             this.radioButton5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.radioButton5.Location = new System.Drawing.Point(25, 205);
+            this.radioButton5.Location = new System.Drawing.Point(6, 175);
             this.radioButton5.Name = "radioButton5";
             this.radioButton5.Size = new System.Drawing.Size(67, 21);
             this.radioButton5.TabIndex = 21;
@@ -240,9 +250,9 @@ namespace FilmKardesligi
             this.gboPuan.Controls.Add(this.rbPuan3);
             this.gboPuan.Controls.Add(this.radioButton4);
             this.gboPuan.Controls.Add(this.radioButton3);
-            this.gboPuan.Location = new System.Drawing.Point(46, 219);
+            this.gboPuan.Location = new System.Drawing.Point(12, 223);
             this.gboPuan.Name = "gboPuan";
-            this.gboPuan.Size = new System.Drawing.Size(265, 266);
+            this.gboPuan.Size = new System.Drawing.Size(101, 196);
             this.gboPuan.TabIndex = 22;
             this.gboPuan.TabStop = false;
             this.gboPuan.Text = "Puan";
@@ -251,7 +261,7 @@ namespace FilmKardesligi
             // 
             this.rbPuan1.AutoSize = true;
             this.rbPuan1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.rbPuan1.Location = new System.Drawing.Point(25, 55);
+            this.rbPuan1.Location = new System.Drawing.Point(6, 25);
             this.rbPuan1.Name = "rbPuan1";
             this.rbPuan1.Size = new System.Drawing.Size(83, 21);
             this.rbPuan1.TabIndex = 17;
@@ -263,7 +273,7 @@ namespace FilmKardesligi
             // 
             this.rbPuan5.AutoSize = true;
             this.rbPuan5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.rbPuan5.Location = new System.Drawing.Point(25, 205);
+            this.rbPuan5.Location = new System.Drawing.Point(6, 175);
             this.rbPuan5.Name = "rbPuan5";
             this.rbPuan5.Size = new System.Drawing.Size(67, 21);
             this.rbPuan5.TabIndex = 21;
@@ -275,7 +285,7 @@ namespace FilmKardesligi
             // 
             this.rbPuan2.AutoSize = true;
             this.rbPuan2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.rbPuan2.Location = new System.Drawing.Point(25, 92);
+            this.rbPuan2.Location = new System.Drawing.Point(6, 62);
             this.rbPuan2.Name = "rbPuan2";
             this.rbPuan2.Size = new System.Drawing.Size(55, 21);
             this.rbPuan2.TabIndex = 18;
@@ -287,7 +297,7 @@ namespace FilmKardesligi
             // 
             this.rbPuan4.AutoSize = true;
             this.rbPuan4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.rbPuan4.Location = new System.Drawing.Point(25, 169);
+            this.rbPuan4.Location = new System.Drawing.Point(6, 139);
             this.rbPuan4.Name = "rbPuan4";
             this.rbPuan4.Size = new System.Drawing.Size(39, 21);
             this.rbPuan4.TabIndex = 20;
@@ -300,7 +310,7 @@ namespace FilmKardesligi
             this.rbPuan3.AutoSize = true;
             this.rbPuan3.Checked = true;
             this.rbPuan3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.rbPuan3.Location = new System.Drawing.Point(25, 128);
+            this.rbPuan3.Location = new System.Drawing.Point(6, 98);
             this.rbPuan3.Name = "rbPuan3";
             this.rbPuan3.Size = new System.Drawing.Size(54, 21);
             this.rbPuan3.TabIndex = 19;
@@ -328,11 +338,86 @@ namespace FilmKardesligi
             this.clbTur.Size = new System.Drawing.Size(224, 130);
             this.clbTur.TabIndex = 24;
             // 
+            // cboTurleriListele
+            // 
+            this.cboTurleriListele.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.cboTurleriListele.DisplayMember = "TurAd";
+            this.cboTurleriListele.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboTurleriListele.FormattingEnabled = true;
+            this.cboTurleriListele.Location = new System.Drawing.Point(731, 36);
+            this.cboTurleriListele.Name = "cboTurleriListele";
+            this.cboTurleriListele.Size = new System.Drawing.Size(121, 28);
+            this.cboTurleriListele.TabIndex = 25;
+            this.cboTurleriListele.ValueMember = "Id";
+            this.cboTurleriListele.SelectedIndexChanged += new System.EventHandler(this.cboTurleriListele_SelectedIndexChanged);
+            // 
+            // cboPuanFiltre
+            // 
+            this.cboPuanFiltre.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.cboPuanFiltre.DisplayMember = "TurAd";
+            this.cboPuanFiltre.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboPuanFiltre.FormattingEnabled = true;
+            this.cboPuanFiltre.Location = new System.Drawing.Point(580, 37);
+            this.cboPuanFiltre.Name = "cboPuanFiltre";
+            this.cboPuanFiltre.Size = new System.Drawing.Size(121, 28);
+            this.cboPuanFiltre.TabIndex = 26;
+            this.cboPuanFiltre.ValueMember = "Id";
+            this.cboPuanFiltre.SelectedIndexChanged += new System.EventHandler(this.cboPuanFiltre_SelectedIndexChanged);
+            // 
+            // pboFoto
+            // 
+            this.pboFoto.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.pboFoto.Image = global::FilmKardesligi.Properties.Resources.noimage;
+            this.pboFoto.InitialImage = ((System.Drawing.Image)(resources.GetObject("pboFoto.InitialImage")));
+            this.pboFoto.Location = new System.Drawing.Point(119, 231);
+            this.pboFoto.Name = "pboFoto";
+            this.pboFoto.Size = new System.Drawing.Size(191, 188);
+            this.pboFoto.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pboFoto.TabIndex = 27;
+            this.pboFoto.TabStop = false;
+            // 
+            // lblFotoDegistir
+            // 
+            this.lblFotoDegistir.AutoSize = true;
+            this.lblFotoDegistir.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.lblFotoDegistir.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.lblFotoDegistir.Location = new System.Drawing.Point(170, 422);
+            this.lblFotoDegistir.Name = "lblFotoDegistir";
+            this.lblFotoDegistir.Size = new System.Drawing.Size(54, 16);
+            this.lblFotoDegistir.TabIndex = 28;
+            this.lblFotoDegistir.Text = "Değiştir";
+            this.lblFotoDegistir.Click += new System.EventHandler(this.lblFotoDegistir_Click);
+            // 
+            // lblFotoKaldir
+            // 
+            this.lblFotoKaldir.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblFotoKaldir.AutoSize = true;
+            this.lblFotoKaldir.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.lblFotoKaldir.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.lblFotoKaldir.Location = new System.Drawing.Point(268, 422);
+            this.lblFotoKaldir.Name = "lblFotoKaldir";
+            this.lblFotoKaldir.Size = new System.Drawing.Size(42, 16);
+            this.lblFotoKaldir.TabIndex = 29;
+            this.lblFotoKaldir.Text = "Kaldır";
+            this.lblFotoKaldir.Click += new System.EventHandler(this.lblFotoKaldir_Click);
+            // 
+            // ofdFoto
+            // 
+            this.ofdFoto.FileName = "openFileDialog1";
+            this.ofdFoto.Filter = "Resim dosyaları (*.jpg, *.jpeg, *.jpe, *.jfif, *.png) | *.jpg; *.jpeg; *.jpe; *.j" +
+    "fif; *.png";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(864, 572);
+            this.Controls.Add(this.lblFotoKaldir);
+            this.Controls.Add(this.lblFotoDegistir);
+            this.Controls.Add(this.pboFoto);
+            this.Controls.Add(this.cboPuanFiltre);
+            this.Controls.Add(this.cboTurleriListele);
             this.Controls.Add(this.clbTur);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.gboPuan);
@@ -355,6 +440,7 @@ namespace FilmKardesligi
             this.menuStrip1.PerformLayout();
             this.gboPuan.ResumeLayout(false);
             this.gboPuan.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pboFoto)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -385,6 +471,12 @@ namespace FilmKardesligi
         private System.Windows.Forms.RadioButton rbPuan3;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.CheckedListBox clbTur;
+        private System.Windows.Forms.ComboBox cboTurleriListele;
+        private System.Windows.Forms.ComboBox cboPuanFiltre;
+        private System.Windows.Forms.PictureBox pboFoto;
+        private System.Windows.Forms.Label lblFotoDegistir;
+        private System.Windows.Forms.Label lblFotoKaldir;
+        private System.Windows.Forms.OpenFileDialog ofdFoto;
     }
 }
 

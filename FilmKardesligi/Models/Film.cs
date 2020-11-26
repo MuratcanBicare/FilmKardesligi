@@ -17,6 +17,8 @@ namespace FilmKardesligi.Models
         [Required, MaxLength(200), Column(Order = 2)]
         public string FilmAd { get; set; }
 
+        public byte[] Foto { get; set; }
+
         //[NotMapped] //veritabanında oluşmaz sadece class da kalır
 
         public string Kunye 

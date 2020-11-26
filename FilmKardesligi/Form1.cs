@@ -1,4 +1,5 @@
 ﻿using FilmKardesligi.Models;
+using FilmKardesligi.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,25 +16,86 @@ namespace FilmKardesligi
     {
         FilmKardesligiContext db = new FilmKardesligiContext();
         Film duzenlenen;
+        bool listelensinMi = false;
+        bool fotoVarMi = false;
         public Form1()
         {
             InitializeComponent();
-            FilmleriListele();
+            PuanFiltreDoldur();
             TurleriListele();
+            listelensinMi = true;
+            FilmleriListele();
+        }
+
+        private void PuanFiltreDoldur()
+        {
+            var ogeler = new List<PuanFiltreOge>()
+            {
+                new PuanFiltreOge() { Puan = 0, Metin ="Tüm Puanlar"},
+
+            };
+
+            for (int i = 1; i <= 5; i++)
+                ogeler.Add(new PuanFiltreOge() { Puan = i, Metin = Utilities.Yildizla(i) });
+
+
+            cboPuanFiltre.DataSource = ogeler;
+            cboPuanFiltre.DisplayMember = "Metin";
+            cboPuanFiltre.ValueMember = "Puan";
         }
 
         private void TurleriListele()
         {
             clbTur.DataSource = db.Turler.OrderBy(x => x.TurAd).ToList();
             clbTur.DisplayMember = "TurAd";
+
+
+            var filtreTurler = db.Turler.OrderBy(x => x.TurAd).ToList();
+
+            filtreTurler.Insert(0, new Tur { TurAd = "Tüm Türler" });
+            cboTurleriListele.DataSource = filtreTurler;
         }
 
         private void FilmleriListele()
         {
-            lstFilmler.DataSource = db.Filmler
+            if (!listelensinMi) return;
+
+
+            BackgroundImage = null;
+            int turId = (int)cboTurleriListele.SelectedValue;
+            int puan = (int)cboPuanFiltre.SelectedValue;
+
+            IQueryable<Film> filmler = db.Filmler;
+
+            if (turId > 0)
+                filmler = filmler.Where(x => x.Turler.Any(t => t.Id == turId));
+
+            if (puan > 0)
+                filmler = filmler.Where(x => x.Puan == puan);
+
+
+
+            lstFilmler.DataSource = filmler
                 .OrderByDescending(x => x.Puan)
-                .ThenBy(x=> x.FilmAd)
+                .ThenBy(x => x.FilmAd)
                 .ToList();
+
+            #region filtresiz listeleme
+            //lstFilmler.DataSource = db.Filmler
+            //    .OrderByDescending(x => x.Puan)
+            //    .ThenBy(x => x.FilmAd)
+            //    .ToList(); 
+            #endregion
+
+
+            #region filtre with where
+            //lstFilmler.DataSource = db.Filmler
+            //.Where(f => f.Turler.Any(t => t.Id == turId))
+            //.OrderByDescending(x => x.Puan)
+            //.ThenBy(x => x.FilmAd)
+            //.ToList(); 
+            #endregion
+
         }
 
         private void tsmiFilmTurleri_Click(object sender, EventArgs e)
@@ -58,6 +120,7 @@ namespace FilmKardesligi
                             .FirstOrDefault(x => x.Checked)
                             .Tag);
             List<Tur> seciliTurler = clbTur.CheckedItems.OfType<Tur>().ToList();
+            byte[] foto = fotoVarMi ? Utilities.ImageToByteArray(pboFoto.Image) : null;
 
             if (filmAd == "")
             {
@@ -70,19 +133,21 @@ namespace FilmKardesligi
                 return;
             }
 
+
             if (duzenlenen == null)
             {
-            #region FilmEkle
-            Film film = new Film()
-            {
-                FilmAd = filmAd,
-                Puan = puan,
-                Turler = seciliTurler
+                #region FilmEkle
+                Film film = new Film()
+                {
+                    FilmAd = filmAd,
+                    Puan = puan,
+                    Turler = seciliTurler,
+                    Foto = foto
 
-            }; 
-            #endregion
+                };
+                #endregion
 
-            db.Filmler.Add(film);
+                db.Filmler.Add(film);
             }
             else
             {
@@ -90,6 +155,7 @@ namespace FilmKardesligi
                 duzenlenen.FilmAd = filmAd;
                 duzenlenen.Puan = puan;
                 duzenlenen.Turler = seciliTurler;
+                duzenlenen.Foto = foto;
                 #endregion
             }
 
@@ -108,7 +174,7 @@ namespace FilmKardesligi
 
         private void FormuTemizle()
         {
-            
+
             txtFilm.Clear();
             clbTur.ClearSelected();
             for (int i = 0; i < clbTur.Items.Count; i++)
@@ -116,10 +182,11 @@ namespace FilmKardesligi
                 clbTur.SetItemChecked(i, false);
             }
             rbPuan3.Checked = true;
-            
+            pboFoto.Image = Resources.noimage;
+            fotoVarMi = false;
         }
 
-        private void FormuResetle() 
+        private void FormuResetle()
         {
             FormuTemizle();
             duzenlenen = null;
@@ -132,7 +199,7 @@ namespace FilmKardesligi
         private void btnSil_Click(object sender, EventArgs e)
         {
             int sid = lstFilmler.SelectedIndex;
-            if (sid < 0 )
+            if (sid < 0)
             {
                 MessageBox.Show("Silmek için bir öğe seçiniz.");
                 return;
@@ -144,7 +211,7 @@ namespace FilmKardesligi
             lstFilmler.SelectedIndex = sid < lstFilmler.Items.Count ? sid : lstFilmler.Items.Count - 1;
         }
 
-        
+
         private void btnDuzenle_Click(object sender, EventArgs e)
         {
             int sid = lstFilmler.SelectedIndex;
@@ -163,16 +230,23 @@ namespace FilmKardesligi
             {
                 Tur tur = (Tur)clbTur.Items[i];
 
-                if (duzenlenen.Turler.Any(x=>x.Id == tur.Id))
+                if (duzenlenen.Turler.Any(x => x.Id == tur.Id))
                 {
                     clbTur.SetItemChecked(i, true);
                 }
             }
-            
+
             //dereceyi seçtir
             gboPuan.Controls.OfType<RadioButton>()
                 .FirstOrDefault(x => (string)x.Tag == duzenlenen.Puan.ToString())
                 .Checked = true;
+
+            //foto varsa göster
+            fotoVarMi = duzenlenen.Foto != null;
+            pboFoto.Image = fotoVarMi
+                ? Utilities.ByteArrayToImage(duzenlenen.Foto)
+                : Resources.noimage;
+
             btnİptal.Show();
             btnEkle.Text = "KAYDET";
             lstFilmler.Enabled = btnDuzenle.Enabled = btnSil.Enabled = false;
@@ -181,6 +255,63 @@ namespace FilmKardesligi
         private void btnİptal_Click(object sender, EventArgs e)
         {
             FormuResetle();
+        }
+
+        private void cboTurleriListele_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            FilmleriListele();
+        }
+
+        private void cboPuanFiltre_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            FilmleriListele();
+        }
+
+        private void lblFotoDegistir_Click(object sender, EventArgs e)
+        {
+
+
+            DialogResult dr = ofdFoto.ShowDialog();
+
+            if (dr == DialogResult.OK)
+            {
+                try
+                {
+
+                    pboFoto.Image = new Bitmap(ofdFoto.FileName);
+                    fotoVarMi = true;
+                }
+                catch (Exception)
+                {
+
+                    MessageBox.Show("Lütfen geçerli bir dosya seçiniz.");
+                }
+            }
+        }
+
+        private void lstFilmler_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (lstFilmler.SelectedIndex < 0)
+                return;
+
+            Film film = (Film)lstFilmler.SelectedItem;
+
+            if (film.Foto != null)
+            {
+                BackgroundImage = Utilities.ByteArrayToImage(film.Foto);
+            }
+            else
+            {
+                BackgroundImage = null;
+            }
+
+
+        }
+
+        private void lblFotoKaldir_Click(object sender, EventArgs e)
+        {
+            pboFoto.Image = Resources.noimage;
+            fotoVarMi = false;
         }
     }
 }
